@@ -50,7 +50,7 @@ class SpacetimeMixin:
                     np.cos(elapsed.get_value() * k * TAU / 8), 0
                 ]), color=col, stroke_width=4))
             hands.add(hand)
-            counter = DecimalNumber(0, num_decimal_places=1, font_size=34, color=color)
+            counter = DecimalNumber(0, num_decimal_places=1, font_size=34, color=color, mob_class=Text)
             counter.move_to(center + DOWN * 1.53)
             counter.add_updater(lambda m, k=rate: m.set_value(elapsed.get_value() * k))
             counts.add(counter)
