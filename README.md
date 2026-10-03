@@ -4,7 +4,7 @@
 
 ## 播放与复现
 
-最终视频：`output/black_hole_science.mp4`；字幕：`output/black_hole_science.srt`。
+最终视频：`output/black_hole_science.mp4`（4 分 15 秒）；字幕：`output/black_hole_science.srt`。九幅成片分镜：`output/storyboard.jpg`；完整解码验证报告：`output/validation.json`。
 
 在 Windows PowerShell 中执行：
 
@@ -14,7 +14,7 @@ uv run python build.py --quality preview
 uv run python build.py --quality final
 ```
 
-`preview` 为 480p / 15 fps，`final` 为 1920 × 1080 / 30 fps。默认输出 H.264 视频与 AAC 音频，可在普通播放器中打开。安装的包由 `uv.lock` 固定；FFmpeg 使用 imageio-ffmpeg 自带版本。数学公式使用 Unicode 矢量文字，数字使用 Text，无须安装 TeX。
+`preview` 为 480p / 15 fps，`final` 为 1920 × 1080 / 30 fps。默认输出 H.264 视频与 AAC 音频，可在普通播放器中打开。安装的包由 `uv.lock` 固定；FFmpeg 使用 imageio-ffmpeg 自带版本。数学公式使用 Manim MathTex，需可用的 LaTeX 与 dvisvgm（本机 TeX Live 2024 已验证）；数字使用 Text。
 
 本机配音使用 Windows `System.Speech` 的 `Microsoft Huihui Desktop` 中文语音；中文画面使用 `Microsoft YaHei` 字体。其他操作系统需替换 `build.py` 的配音生成函数与字体。语音首先生成到 `media/voice/`，按文本哈希缓存；修改文字即可生成新语音。`--voice-only` 只生成配音，`--skip-render` 使用现有画面重新混音。
 

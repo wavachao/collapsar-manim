@@ -83,10 +83,12 @@ class SpacetimeMixin:
 
         arrow = CurvedArrow([-1.8, -.72, 0], [1.8, -.72, 0], angle=PI / 3,
                             color=PURPLE, stroke_width=3)
-        reunion = self._st_label("重逢时：你经历的时间更少", 24, GOLD)
+        reunion = self._st_label("重逢时\n你经历的时间更少", 24, GOLD)
+        reunion.scale_to_fit_width(3.4)
         reunion.move_to([0, .48, 0])
         self.body.add(arrow, reunion)
         self.play(FadeOut(connector), Create(arrow), FadeIn(reunion), run_time=1.6)
+        self.body.remove(connector)
         self.caption("去未来：重逢时，彼此年龄出现差别")
         self.say("经历较慢走时的旅行者，之后与远处的人重逢，可能发现自己老得更少。这是相对论意义上的去未来，完整时间差必须计算整个旅程。", duration=3)
 
@@ -155,6 +157,8 @@ class SpacetimeMixin:
         old_geometry = VGroup(sheet, point_a, point_b, name_a, name_b,
                               route, bridge, bridge_label, sheet_note)
         self.play(FadeOut(old_geometry), FadeOut(distinction), FadeOut(hypothesis), run_time=1)
+        self.body.remove(sheet, point_a, point_b, name_a, name_b, route,
+                         bridge, bridge_label, sheet_note, distinction, hypothesis)
         grid = NumberPlane(x_range=[-6, 6, .5], y_range=[-2.3, 2.3, .4],
                            x_length=12, y_length=4.6,
                            background_line_style={"stroke_color": CYAN,
@@ -165,6 +169,7 @@ class SpacetimeMixin:
                          fill_color=BG, fill_opacity=1)
         ring = Circle(radius=.68, stroke_color=GOLD, stroke_opacity=.75, stroke_width=2)
         ending = self.formula("Gμν = (8πG/c⁴) Tμν", font_size=35).move_to([0, 2.12, 0])
+        ending.add_background_rectangle(color=BG, opacity=.96, buff=.13)
         self.body.add(grid, central, ring, ending)
         self.play(Create(grid), FadeIn(central), Create(ring), Write(ending), run_time=2)
 

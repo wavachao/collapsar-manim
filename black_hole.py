@@ -31,8 +31,19 @@ class BlackHoleFilm(SpacetimeMixin, Scene):
         return Text(value, font="Microsoft YaHei", font_size=font_size, color=color)
 
     def formula(self, text, font_size=40):
-        font = "Microsoft YaHei" if any("\u4e00" <= c <= "\u9fff" for c in text) else "DejaVu Sans"
-        return Text(text, font=font, font_size=font_size, color=CYAN)
+        equations = {
+            "F = GMm / r²": r"F=\frac{GMm}{r^2}",
+            "½mv² = GMm / r": r"\frac12 mv^2=\frac{GMm}{r}",
+            "v = √(2GM/r)": r"v=\sqrt{\frac{2GM}{r}}",
+            "rₛ = 2GM / c²": r"r_s=\frac{2GM}{c^2}",
+            "rₛ": r"r_s",
+            "dτ/dt = √(1 − rₛ/r)": r"\frac{d\tau}{dt}=\sqrt{1-\frac{r_s}{r}}",
+            "r = 4rₛ/3  →  dτ/dt = 0.5": r"r=\frac43 r_s\quad\Longrightarrow\quad\frac{d\tau}{dt}=0.5",
+            "Gμν = (8πG/c⁴) Tμν": r"G_{\mu\nu}=\frac{8\pi G}{c^4}T_{\mu\nu}",
+        }
+        if text in equations:
+            return MathTex(equations[text], font_size=font_size, color=CYAN)
+        return Text(text, font="Microsoft YaHei", font_size=font_size, color=CYAN)
 
     def caption(self, text):
         if self.subtitle is not None:
@@ -57,9 +68,10 @@ class BlackHoleFilm(SpacetimeMixin, Scene):
         start = float(self.time)
         for chunk in chunks:
             chunk_duration = span * len(chunk) / len(text)
-            cues.append({"start": float(self.time), "duration": chunk_duration, "text": chunk})
+            cue_start = float(self.time)
             self.caption(chunk)
             self.wait(chunk_duration)
+            cues.append({"start": cue_start, "duration": float(self.time) - cue_start, "text": chunk})
         self.timeline.append({"start": start, "duration": float(self.time) - start,
                               "text": text, "file": str(wav), "cues": cues})
 
@@ -162,7 +174,7 @@ class BlackHoleFilm(SpacetimeMixin, Scene):
         self.body.add(spiral, gas)
         self.play(Create(spiral), FadeIn(gas), run_time=1)
         self.play(MoveAlongPath(gas, spiral), run_time=2.3, rate_func=linear)
-        self.say("气体相互摩擦，失去角动量，才可能一路旋进黑洞。", 3)
+        self.say("气体相互作用，把角动量向外输运，部分物质才逐渐旋入。", 3)
         self.say("发亮的是外面的吸积盘，黑洞本身仍然漆黑。", 3)
 
     def horizon_chapter(self):
@@ -178,6 +190,7 @@ class BlackHoleFilm(SpacetimeMixin, Scene):
         self.play(TransformFromCopy(eq2, eq3), FadeIn(note), run_time=1.3)
         self.say("令逃逸速度等于光速，得到史瓦西半径。太阳质量对应约三公里。", 3)
         self.play(FadeOut(VGroup(eq1, eq2, eq3, note)), run_time=.6)
+        self.body.remove(eq1, eq2, eq3, note)
         hole = self.hole(1.05, LEFT * 3.65)
         horizon = DashedVMobject(Circle(1.35, color=CYAN).move_to(LEFT * 3.65), num_dashes=60)
         radius_line = Line([-3.65, 0, 0], [-2.3, 0, 0], color=CYAN)
@@ -192,11 +205,17 @@ class BlackHoleFilm(SpacetimeMixin, Scene):
         arrows = VGroup(*[Arrow([3.2, -.9, 0], [x, .85, 0], buff=0, color=CYAN,
                                 stroke_width=2) for x in [2.6, 3.2, 3.8]])
         ctext = self.text("未来允许的方向", 22).move_to([3.2, -2.1, 0])
-        self.body.add(hole, horizon, radius_line, radius_label, hlabel, plane, cone, arrows, ctext)
+        axis_labels = VGroup(self.text("r 增大 →", 15, PURPLE).move_to([5.15, -1.78, 0]),
+                             self.text("示意时间 ↑", 15, PURPLE).move_to([1.35, 1.87, 0]))
+        self.body.add(hole, horizon, radius_line, radius_label, hlabel, plane, cone, arrows, ctext, axis_labels)
         self.play(FadeIn(hole), Create(horizon), Create(radius_line), FadeIn(radius_label),
-                  FadeIn(hlabel), Create(plane), FadeIn(cone), GrowFromCenter(arrows), FadeIn(ctext), run_time=2)
+                  FadeIn(hlabel), Create(plane), FadeIn(cone), GrowFromCenter(arrows), FadeIn(ctext), FadeIn(axis_labels), run_time=2)
         self.say("更深的答案是时空几何：光锥规定了你能够走向的未来。", 3)
-        self.play(VGroup(cone, arrows).animate.rotate(PI / 2, about_point=np.array([3.2, -.9, 0])),
+        inside_cone = Polygon([3.2, -.9, 0], [.95, 1.4, 0], [2.8, 1.4, 0],
+                              fill_color=GOLD, fill_opacity=.15, stroke_color=GOLD)
+        inside_arrows = VGroup(*[Arrow([3.2, -.9, 0], [x, .85, 0], buff=0, color=GOLD,
+                                       stroke_width=2) for x in [1.5, 2.05, 2.6]])
+        self.play(Transform(cone, inside_cone), Transform(arrows, inside_arrows),
                   ctext.animate.become(self.text("视界内：未来指向更小的 r", 22).move_to([3.2, -2.1, 0])), run_time=2)
         self.say("跨过视界后，所有未来方向都朝向更小的半径，连光也无法返回。", 3)
         self.say("光锥图是因果示意；黑洞不是一块可以撞上的实体表面。", 3)
