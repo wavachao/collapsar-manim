@@ -1,10 +1,10 @@
 # 黑洞：宇宙的单向门
 
-中文 Manim 科普短片：深空星点、青紫光轨、动态公式、光锥、双时钟和时空网格。中文合成配音、内嵌字幕与原创程序合成氛围音均随构建生成。
+中文 Manim 科普短片：深空星点、青紫光轨、动态公式、光锥、双时钟和时空网格。中文合成配音、画内字幕与原创程序合成氛围音均随构建生成。
 
 ## 播放与复现
 
-最终视频：`output/black_hole_science.mp4`（4 分 15 秒）；字幕：`output/black_hole_science.srt`。九幅成片分镜：`output/storyboard.jpg`；完整解码验证报告：`output/validation.json`。
+最终视频：`output/black_hole_science.mp4`（4 分 15 秒）。九幅成片分镜：`output/storyboard.jpg`；完整解码验证报告：`output/validation.json`。生成媒体不纳入 Git，克隆仓库后通过以下命令制作。
 
 在 Windows PowerShell 中执行：
 
@@ -13,6 +13,8 @@ uv sync --locked
 uv run python build.py --quality preview
 uv run python build.py --quality final
 ```
+
+视频已经带有画内字幕，直接播放即可。默认不再生成视频旁的同名 SRT，以避免播放器自动叠加字幕。需要独立字幕用于编辑时，显式运行 `uv run python build.py --quality final --skip-render --export-srt`，导出至 `output/caption_exports/black_hole_science.transcript.srt`；不要在播放本片时再加载这份字幕。旧版本视频旁的同名 SRT 在重新构建时会迁移到该目录。
 
 `preview` 为 480p / 15 fps，`final` 为 1920 × 1080 / 30 fps。默认输出 H.264 视频与 AAC 音频，可在普通播放器中打开。安装的包由 `uv.lock` 固定；FFmpeg 使用 imageio-ffmpeg 自带版本。数学公式使用 Manim MathTex，需可用的 LaTeX 与 dvisvgm（本机 TeX Live 2024 已验证）；数字使用 Text。
 

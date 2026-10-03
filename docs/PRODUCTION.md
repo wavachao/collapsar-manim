@@ -24,7 +24,11 @@
 - 实际预览迭代后检查轨道、数学推导、视界光锥、双时钟、折叠空间、弯曲网格与片尾。最终渲染日志没有 WARNING、ERROR 或 Traceback。
 - 核心公式改为实际 MathTex；LaTeX/dvisvgm 在本机 TeX Live 2024 中已验证。字幕保持 Microsoft YaHei 矢量文字。
 - 修正角动量输运表述、视界内示意光锥方向、淡出对象闪回、时钟文字与方程网格重叠；字幕结束时间对齐渲染帧边界。
-- 检查报告：`output/validation.json`；九幅成片分镜：`output/storyboard.jpg`；独立字幕：`output/black_hole_science.srt`。
+- 检查报告：`output/validation.json`；九幅成片分镜：`output/storyboard.jpg`；可选独立字幕：`output/caption_exports/black_hole_science.transcript.srt`。
+
+## 字幕重叠修复
+
+视频已烧录画内字幕，旧版同时在视频旁导出同名 SRT，播放器可能自动加载并叠加。默认构建现仅保留画内字幕；独立字幕需 --export-srt 显式导出，并放在 caption_exports 目录、使用 transcript 文件名。旧同名字幕迁移至该目录，保留可编辑文本。未删除画内字幕，也无需重新渲染数学画面。
 
 ## 复现范围
 
